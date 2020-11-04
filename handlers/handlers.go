@@ -34,6 +34,7 @@ import (
 // Provider each Provider must support GetuserInfo
 type Provider interface {
 	Configure()
+	Validate(r *http.Request, jwt string) bool
 	GetUserInfo(r *http.Request, user *structs.User, customClaims *structs.CustomClaims, ptokens *structs.PTokens) error
 }
 

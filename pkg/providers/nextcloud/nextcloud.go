@@ -31,6 +31,10 @@ func (Provider) Configure() {
 	log = cfg.Logging.Logger
 }
 
+func (Provider) Validate(r *http.Request, jwt string) bool {
+	return true
+}
+
 // GetUserInfo provider specific call to get userinfomation
 func (Provider) GetUserInfo(r *http.Request, user *structs.User, customClaims *structs.CustomClaims, ptokens *structs.PTokens) (rerr error) {
 	client, _, err := common.PrepareTokensAndClient(r, ptokens, true)

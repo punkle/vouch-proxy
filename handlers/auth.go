@@ -66,6 +66,7 @@ func CallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Debugf("/auth Claims from userinfo: %+v", customClaims)
+
 	//getProviderJWT(r, &user)
 	// log.Debug("/auth CallbackHandler")
 	// log.Debugf("/auth %+v", user)

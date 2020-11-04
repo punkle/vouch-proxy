@@ -14,9 +14,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"fmt"
+	"bytes"
 
 	"github.com/vouch/vouch-proxy/pkg/cfg"
 	"github.com/vouch/vouch-proxy/pkg/providers/common"
+	"github.com/vouch/vouch-proxy/pkg/jwtmanager"
 	"github.com/vouch/vouch-proxy/pkg/structs"
 	"go.uber.org/zap"
 )
@@ -31,12 +34,36 @@ func (Provider) Configure() {
 	log = cfg.Logging.Logger
 }
 
+func (Provider) Validate(r *http.Request, jwt string) bool {
+	claims, _ := jwtmanager.ClaimsFromJWT(jwt)
+	var jsonStr = []byte(fmt.Sprintf(`token=%s`, claims.PAccessToken))
+	req, _ := http.NewRequest("POST", cfg.GenOAuth.IntrospectURL, bytes.NewBuffer(jsonStr))
+	req.SetBasicAuth(cfg.OAuthClient.ClientID, cfg.OAuthClient.ClientSecret)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+			return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		log.Info("failed oidc access_token validation")
+		return false
+	} else {
+		log.Info("suceeded oidc access_token validation")
+		return true
+	}
+}
+
 // GetUserInfo provider specific call to get userinfomation
 func (Provider) GetUserInfo(r *http.Request, user *structs.User, customClaims *structs.CustomClaims, ptokens *structs.PTokens) (rerr error) {
 	client, _, err := common.PrepareTokensAndClient(r, ptokens, true)
 	if err != nil {
 		return err
 	}
+
 	userinfo, err := client.Get(cfg.GenOAuth.UserInfoURL)
 	if err != nil {
 		return err

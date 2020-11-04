@@ -29,6 +29,10 @@ func (Provider) Configure() {
 	log = cfg.Logging.Logger
 }
 
+func (Provider) Validate(r *http.Request, jwt string) bool {
+	return true
+}
+
 // GetUserInfo provider specific call to get userinfomation
 // More info: https://developers.home-assistant.io/docs/en/auth_api.html
 func (Provider) GetUserInfo(r *http.Request, user *structs.User, customClaims *structs.CustomClaims, ptokens *structs.PTokens) (rerr error) {

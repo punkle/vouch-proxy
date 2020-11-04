@@ -72,6 +72,7 @@ type oauthConfig struct {
 	RedirectURLs    []string `mapstructure:"callback_urls"  envconfig:"callback_urls"`
 	Scopes          []string `mapstructure:"scopes"`
 	UserInfoURL     string   `mapstructure:"user_info_url" envconfig:"user_info_url"`
+	IntrospectURL   string   `mapstructure:"introspect_url" envconfig:"introspect_url"`
 	UserTeamURL     string   `mapstructure:"user_team_url" envconfig:"user_team_url"`
 	UserOrgURL      string   `mapstructure:"user_org_url" envconfig:"user_org_url"`
 	PreferredDomain string   `mapstructure:"preferredDomain"`

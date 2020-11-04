@@ -27,6 +27,7 @@ import (
 var (
 	errNoJWT  = errors.New("no jwt found in request")
 	errNoUser = errors.New("no User found in jwt")
+	errNoValidate = errors.New("provider validation not successful")
 )
 
 // ValidateRequestHandler /validate
@@ -56,6 +57,13 @@ func ValidateRequestHandler(w http.ResponseWriter, r *http.Request) {
 				fmt.Errorf("http header 'Host: %s' not authorized for configured `vouch.domains` (is Host being sent properly?)", r.Host))
 			return
 		}
+	}
+
+	log.Info("calling validate")
+
+	if !provider.Validate(r, jwt) {
+		send401or200PublicAccess(w, r, errNoValidate)
+		return
 	}
 
 	generateCustomClaimsHeaders(w, claims)

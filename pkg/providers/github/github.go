@@ -36,6 +36,10 @@ func (Provider) Configure() {
 	log = cfg.Logging.Logger
 }
 
+func (Provider) Validate(r *http.Request, jwt string) bool {
+	return true
+}
+
 // GetUserInfo github user info, calls github api for org and teams
 // https://developer.github.com/apps/building-integrations/setting-up-and-registering-oauth-apps/about-authorization-options-for-oauth-apps/
 func (me Provider) GetUserInfo(r *http.Request, user *structs.User, customClaims *structs.CustomClaims, ptokens *structs.PTokens) (rerr error) {
